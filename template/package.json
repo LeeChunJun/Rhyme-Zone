@@ -1,0 +1,12 @@
+{
+    "name": "rhyme-blog",
+    "version": "1.0.0",
+    "description": "rhyme web blog",
+    "main": "index.js",
+    "author": "Rhyme",
+    "license": "",
+    "dependencies": {
+        "bootstrap": "^5.1.3",
+        "highlight.js": "^11.3.1"
+    }
+}

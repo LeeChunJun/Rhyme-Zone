@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>我的博客</title>
+    <description>我的博客文章</description>
+    <link>https://yoursite.com</link>
+    <% for(let post of posts) { %>
+      <item>
+        <title>
+          <%= post.title %>
+        </title>
+        <link>https://yoursite.com/<%= post.dest %>
+          </link>
+          <pubDate>
+            <%= post.creationDate.toUTCString() %>
+          </pubDate>
+          <description>
+            <![CDATA[<%= post.contentHtml %>]]>
+          </description>
+      </item>
+      <% } %>
+  </channel>
+</rss>

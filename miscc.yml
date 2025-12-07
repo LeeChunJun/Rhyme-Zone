@@ -1,0 +1,41 @@
+# 标签定义 - 为文章分类提供颜色和标题
+tags:
+  embedded:
+    title: Embedded      # 标签显示名称
+    color: "#4032a8"     # 标签显示颜色
+  misc:
+    title: Misc          # 标签显示名称
+    color: "#7aa629"     # 标签显示颜色
+  recsys:
+    title: RecSys
+    color: "#f7df1e"
+  android:
+    title: Android
+    color: "#f7df1e"  
+  object-c:
+    title: Objective C
+    color: "#f7df1e"   
+  cross-platform:
+    title: Cross Platform
+    color: "#f7df1e"
+  javascript:
+    title: JavaScript
+    color: "#f7df1e"
+  python:
+    title: Python
+    color: "#3776ab"
+  webdev:
+    title: Web Development
+    color: "#61dafb"
+
+# 目录配置
+dirs:
+  outputBase: "dist"        # 输出目录，默认 "dist"
+  template: "template"      # 模板目录，默认 "template"
+  assets: "assets"          # 资源目录，默认 "assets"
+  assetsOutput: "assets"    # 资源输出目录，默认 "assets"
+  posts: "posts"            # 文章源目录，默认 "posts"
+  postsOutput: "posts"      # 文章输出目录，默认 "posts"
+
+# 启用 RSS feed 生成
+rss: true

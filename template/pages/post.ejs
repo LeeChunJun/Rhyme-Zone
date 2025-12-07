@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <title>
+        <%=title%>
+    </title>
+    <% if(containsCode) { %>
+        <link href="<%- asset("@highlight.js/styles/atom-one-light.css") %>" rel="stylesheet">
+        <% } %>
+            <link href="<%- asset("@bootstrap/dist/css/bootstrap.min.css") %>" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>
+                <%=title%>
+            </h1>
+            <time><%=creationDate.toLocaleDateString("zh-CN")%></time>
+        </header>
+
+        <main>
+            <%-contentHtml%>
+        </main>
+
+        <footer>
+            <div class="tags">
+                <%for(let tag of tags) {%>
+                    <span class="tag" style="background-color: <%=tag.color%>; color:#FFF">
+                        <%=tag.title%>
+                    </span>
+                    <% } %>
+            </div>
+        </footer>
+    </div>
+</body>
+
+</html>

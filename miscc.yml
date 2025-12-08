@@ -30,7 +30,7 @@ tags:
 
 # 目录配置
 dirs:
-  outputBase: "dist"        # 输出目录，默认 "dist"
+  outputBase: "doc"         # 输出目录，默认 "dist"
   template: "template"      # 模板目录，默认 "template"
   assets: "assets"          # 资源目录，默认 "assets"
   assetsOutput: "assets"    # 资源输出目录，默认 "assets"

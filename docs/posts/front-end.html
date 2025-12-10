@@ -1,6 +1,10 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="..\assets\post-style.css">
+    <link rel="icon" type="image/png" href="..\assets\favicon.png">
     <title>
         前端技术栈博客文章
     </title>
@@ -9,35 +13,46 @@
 </head>
 
 <body>
+    <div class="essays-header-container">
+        <img src="..\assets\essays-header.png" alt="Essays Header" class="header-image">
+    </div>
     <div class="container">
-        <header>
-            <h1>
+        <div class="essay-item-container">
+            <!-- 标题 -->
+            <div class="essay-item-title">
                 前端技术栈博客文章
-            </h1>
-            <time>2025/12/5</time>
-        </header>
-
-        <main>
-            <h1 id="web-front-end-stack">Web-Front-End-Stack</h1>
+            </div>
+            <!-- 日期 -->
+            <div class="essay-item-date">
+                <span style="color: grey;">
+                    2025年12月5日 08:00
+                </span>
+            </div>
+            <!-- 内容 -->
+            <div class="essay-item-content">
+                <h1 id="web-front-end-stack">Web-Front-End-Stack</h1>
 <h1 id="content-heading">Content Heading</h1>
 <p>我的第一篇 JavaScript 文章...</p>
 
-        </main>
-
-        <footer>
-            <div class="tags">
+            </div>
+            <!-- 标签 -->
+            <div class="essay-item-tags">
                 
-                    <span class="tag" style="background-color: #f7df1e; color:#FFF">
+                    <span style="background-color: #f7df1e; color:#FFF">
                         JavaScript
                     </span>
                     
-                    <span class="tag" style="background-color: #61dafb; color:#FFF">
+                    <span style="background-color: #61dafb; color:#FFF">
                         Web Development
                     </span>
                     
             </div>
-        </footer>
+        </div>
     </div>
 </body>
+
+<footer class="miscc-footer">
+    Powered by <a href=" " class="miscc-link">micss</a> version v0.0.6-1-g4297cce
+</footer>
 
 </html>

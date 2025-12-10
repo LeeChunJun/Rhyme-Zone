@@ -1,38 +1,54 @@
 <html>
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="<%= asset('/css/post-style.css') %>">
+    <link rel="icon" type="image/png" href="<%= asset('/img/favicon.png') %>">
     <title>
         <%=title%>
     </title>
     <% if(containsCode) { %>
-        <link href="<%- asset("@highlight.js/styles/atom-one-light.css") %>" rel="stylesheet">
+        <link href="<%- asset('@highlight.js/styles/atom-one-light.css') %>" rel="stylesheet">
         <% } %>
-            <link href="<%- asset("@bootstrap/dist/css/bootstrap.min.css") %>" rel="stylesheet">
+            <link href="<%- asset('@bootstrap/dist/css/bootstrap.min.css') %>" rel="stylesheet">
 </head>
 
 <body>
+    <div class="essays-header-container">
+        <img src="<%= asset('/img/essays-header.png') %>" alt="Essays Header" class="header-image">
+    </div>
     <div class="container">
-        <header>
-            <h1>
+        <div class="essay-item-container">
+            <!-- 标题 -->
+            <div class="essay-item-title">
                 <%=title%>
-            </h1>
-            <time><%=creationDate.toLocaleDateString("zh-CN")%></time>
-        </header>
-
-        <main>
-            <%-contentHtml%>
-        </main>
-
-        <footer>
-            <div class="tags">
+            </div>
+            <!-- 日期 -->
+            <div class="essay-item-date">
+                <span style="color: grey;">
+                    <%= new Intl.DateTimeFormat('zh-CN', { year: 'numeric' , month: 'long' , day: 'numeric' ,
+                        hour: '2-digit' , minute: '2-digit' }).format(creationDate) %>
+                </span>
+            </div>
+            <!-- 内容 -->
+            <div class="essay-item-content">
+                <%-contentHtml%>
+            </div>
+            <!-- 标签 -->
+            <div class="essay-item-tags">
                 <%for(let tag of tags) {%>
-                    <span class="tag" style="background-color: <%=tag.color%>; color:#FFF">
+                    <span style="background-color: <%=tag.color%>; color:#FFF">
                         <%=tag.title%>
                     </span>
                     <% } %>
             </div>
-        </footer>
+        </div>
     </div>
 </body>
+
+<footer class="miscc-footer">
+    Powered by <a href=" " class="miscc-link">micss</a> version <%= MISCC_VERSION%>
+</footer>
 
 </html>

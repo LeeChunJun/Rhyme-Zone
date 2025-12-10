@@ -5,7 +5,7 @@
 rhyme-blog                    # 项目根目录
 ├─assets
 │  └─css                      # 样式文件目录
-│     └─style.css             # 样式文件 
+│
 ├─bin
 │  └─index.cjs                # 执行文件，用于构建静态站点
 │

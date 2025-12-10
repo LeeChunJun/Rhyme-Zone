@@ -2,39 +2,33 @@
 <html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="<%= asset('/css/style.css') %>">
-    <link rel="icon" type="image/x-icon" href="<%= asset('/img/favicon.png') %>">
-    <title>我的博客</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="<%= asset('/css/index-style.css') %>">
+  <link rel="icon" type="image/png" href="<%= asset('/img/favicon.png') %>">
+  <title>Rhyme's Essay</title>
 </head>
 
 <body>
-    <div class="container">
-        <h1>我的博客</h1>
-        <div class="posts-list">
-            <% for(let post of posts) { %>
-                <div class="post-item">
-                    <h3><a href="<%=post.dest%>">
-                            <%=post.title %>
-                        </a>
-                    </h3>
-                    <div class="post-meta">
-                        <time><%=post.creationDate.toLocaleDateString("zh-CN")%></time>
-                        <div class="post-tags">
-                            <% for(let tag of post.tags) { %>
-                                <span style="background-color: <%= tag.color %>; color:#FFF">
-                                    <%=tag.title%>
-                                </span>
-                                <% } %>
-                        </div>
-                    </div>
-                </div>
-                <% } %>
-        </div>
-    </div>
-    <div>Powered by miscc version <%= MISCC_VERSION%>
-    </div>
+  <div class="essays-header-container">
+    <img src="<%= asset('/img/essays-header.png') %>" alt="Essays Header" class="header-image">
+  </div>
+  <div class="container">
+    <% for(let post of posts) { %>
+      <div class="essay-item-container">
+        <a href="<%=post.dest%>" class="essay-item-title">
+          <%=post.title %>
+        </a>
+        <span class="essay-item-date">
+          <%=post.creationDate.toLocaleDateString("zh-CN")%>
+        </span>
+      </div>
+      <% } %>
+  </div>
 </body>
+
+<footer class="miscc-footer">
+  Powered by <a href="https://github.com/wiomoc/miscc" class="miscc-link">miscc</a> version <%= MISCC_VERSION%>
+</footer>
 
 </html>

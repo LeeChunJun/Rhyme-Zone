@@ -27,6 +27,8 @@ console.log("Hello, miscc!");
 
 ### 脚注示例
 
+```markdown
 这里是带有脚注的内容[^1]。
 
 [^1]: 这是脚注内容
+```

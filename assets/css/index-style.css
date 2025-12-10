@@ -8,7 +8,7 @@ body {
 .container {
     background-color: #3A4D46;
     width: auto;
-    margin: -18px 15%, 0, 15%;
+    margin: -18px 15% 0 15%;
     padding: 30px 20px 30px 20px;
     position: relative;
     z-index: 1;
@@ -16,7 +16,7 @@ body {
 
 .essay-header-container {
     width: auto;
-    margin: 45px 15%, 0, 15%;
+    margin: 45px 15% 0 15%;
     position: relative;
     height: 50px;
     z-index: 2;
@@ -66,7 +66,7 @@ body {
 .miscc-footer {
     width: auto;
     background: transparent;
-    margin: 0 15%, 45%, 15%;
+    margin: 0 15% 45% 15%;
 }
 
 .miscc-link {

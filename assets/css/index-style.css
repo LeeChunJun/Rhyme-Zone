@@ -8,7 +8,7 @@ body {
 .container {
     background-color: #3A4D46;
     width: auto;
-    margin: -18px 15% 0 15%;
+    margin: -5px 15% 0 15%;
     padding: 30px 20px 30px 20px;
     position: relative;
     z-index: 1;
@@ -18,7 +18,7 @@ body {
     width: auto;
     margin: 45px 15% 0 15%;
     position: relative;
-    height: 50px;
+    height: 100px;
     z-index: 2;
 }
 

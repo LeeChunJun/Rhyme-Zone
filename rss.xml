@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>我的博客</title>
+    <description>我的博客文章</description>
+    <link>https://yoursite.com</link>
+    
+      <item>
+        <title>
+          扣钉坊系列
+        </title>
+        <link>https://yoursite.com/posts/coding-workshop.html
+          </link>
+          <pubDate>
+            Sat, 13 Dec 2025 00:00:00 GMT
+          </pubDate>
+          <description>
+            <![CDATA[]]>
+          </description>
+      </item>
+      
+      <item>
+        <title>
+          Android 技术栈博客文章
+        </title>
+        <link>https://yoursite.com/posts/android.html
+          </link>
+          <pubDate>
+            Sat, 06 Dec 2025 00:00:00 GMT
+          </pubDate>
+          <description>
+            <![CDATA[]]>
+          </description>
+      </item>
+      
+      <item>
+        <title>
+          跨平台技术栈博客文章
+        </title>
+        <link>https://yoursite.com/posts/cross-platform.html
+          </link>
+          <pubDate>
+            Fri, 05 Dec 2025 00:00:00 GMT
+          </pubDate>
+          <description>
+            <![CDATA[]]>
+          </description>
+      </item>
+      
+      <item>
+        <title>
+          前端技术栈博客文章
+        </title>
+        <link>https://yoursite.com/posts/front-end.html
+          </link>
+          <pubDate>
+            Fri, 05 Dec 2025 00:00:00 GMT
+          </pubDate>
+          <description>
+            <![CDATA[]]>
+          </description>
+      </item>
+      
+      <item>
+        <title>
+          iOS 技术栈博客文章
+        </title>
+        <link>https://yoursite.com/posts/ios.html
+          </link>
+          <pubDate>
+            Fri, 05 Dec 2025 00:00:00 GMT
+          </pubDate>
+          <description>
+            <![CDATA[]]>
+          </description>
+      </item>
+      
+      <item>
+        <title>
+          推荐系统技术栈博客文章
+        </title>
+        <link>https://yoursite.com/posts/recsys.html
+          </link>
+          <pubDate>
+            Fri, 05 Dec 2025 00:00:00 GMT
+          </pubDate>
+          <description>
+            <![CDATA[]]>
+          </description>
+      </item>
+      
+  </channel>
+</rss>

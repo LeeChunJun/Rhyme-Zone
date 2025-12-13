@@ -1,0 +1,10 @@
+{
+    "name": "rhyme-blog-generate",
+    "version": "1.0.0",
+    "description": "rhyme web blog Generate",
+    "author": "Rhyme",
+    "license": "",
+    "scripts": {
+        "build": "node ./bin/index.cjs"
+    }
+}

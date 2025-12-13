@@ -27,6 +27,12 @@ tags:
   webdev:
     title: Web Development
     color: "#61dafb"
+  coding-workshop:
+    title: Coding WorkShop
+    color: "#f7df1e"
+  appdev:
+    title: App Development
+    color: "#3776ab"
 
 # 目录配置
 dirs:

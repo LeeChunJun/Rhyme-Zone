@@ -8,6 +8,8 @@ private: false
 
 ## Code Workshop for App
 
+1. 创建项目
+
 ## Yida Platform
 
-宜搭平台
+1. 宜搭平台

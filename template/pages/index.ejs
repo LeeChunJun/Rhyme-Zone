@@ -1,9 +1,11 @@
+<!-- index.ejs -->
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
   <link rel="stylesheet" href="<%= asset('/css/index-style.css') %>">
   <link rel="icon" type="image/png" href="<%= asset('/img/favicon.png') %>">
   <title>Rhyme's Essay</title>
@@ -25,10 +27,9 @@
       </div>
       <% } %>
   </div>
+  <footer class="miscc-footer">
+    Powered by <a href="https://github.com/wiomoc/miscc" class="miscc-link">miscc</a> version <%= MISCC_VERSION%>
+  </footer>
 </body>
-
-<footer class="miscc-footer">
-  Powered by <a href="https://github.com/wiomoc/miscc" class="miscc-link">miscc</a> version <%= MISCC_VERSION%>
-</footer>
 
 </html>

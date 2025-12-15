@@ -1,8 +1,10 @@
+<!-- post.ejs -->
 <html>
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
     <link rel="stylesheet" href="<%= asset('/css/post-style.css') %>">
     <link rel="icon" type="image/png" href="<%= asset('/img/favicon.png') %>">
     <title>
@@ -11,7 +13,6 @@
     <% if(containsCode) { %>
         <link href="<%- asset('@highlight.js/styles/atom-one-light.css') %>" rel="stylesheet">
         <% } %>
-            <!-- <link href="<%- asset('@bootstrap/dist/css/bootstrap.min.css') %>" rel="stylesheet"> -->
 </head>
 
 <body>
@@ -26,10 +27,8 @@
             </div>
             <!-- 日期 -->
             <div class="essay-item-date">
-                <span style="color: grey;">
-                    <%= new Intl.DateTimeFormat('zh-CN', { year: 'numeric' , month: 'long' , day: 'numeric' ,
-                        hour: '2-digit' , minute: '2-digit' }).format(creationDate) %>
-                </span>
+                <%= new Intl.DateTimeFormat('zh-CN', { year: 'numeric' , month: 'long' , day: 'numeric' ,
+                    hour: '2-digit' , minute: '2-digit' }).format(creationDate) %>
             </div>
             <!-- 内容 -->
             <div class="essay-item-content">
@@ -38,17 +37,16 @@
             <!-- 标签 -->
             <div class="essay-item-tags">
                 <%for(let tag of tags) {%>
-                    <span style="background-color: <%=tag.color%>; color:#FFF">
+                    <span>
                         <%=tag.title%>
                     </span>
                     <% } %>
             </div>
         </div>
     </div>
+    <footer class="miscc-footer">
+        Powered by <a href="https://github.com/wiomoc/miscc" class="miscc-link">miscc</a> version <%= MISCC_VERSION%>
+    </footer>
 </body>
-
-<footer class="miscc-footer">
-    Powered by <a href=" " class="miscc-link">micss</a> version <%= MISCC_VERSION%>
-</footer>
 
 </html>

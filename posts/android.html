@@ -9,6 +9,8 @@
         Android 技术栈博客文章
     </title>
     
+        <link href="../assets/atom-one-light.css" rel="stylesheet">
+        
             <!-- <link href="../assets/bootstrap.min.css" rel="stylesheet"> -->
 </head>
 
@@ -30,7 +32,390 @@
             </div>
             <!-- 内容 -->
             <div class="essay-item-content">
-                <h1 id="android-stack">Android-Stack</h1>
+                <h2 id="android-面试">Android 面试</h2>
+<p>✦ 基于你的Android开发经验，我来为你总结面试的核心知识点：</p>
+<p>  Android基础知识</p>
+<ol>
+<li>四大组件</li>
+</ol>
+<ul>
+<li>Activity: 生命周期、启动模式、任务栈管理</li>
+<li>Service: 前台服务、后台服务、绑定服务</li>
+<li>BroadcastReceiver: 静态注册、动态注册、LocalBroadcastManager</li>
+<li>ContentProvider: 数据共享、权限管理、ContentResolver</li>
+</ul>
+<ol start="2">
+<li>Activity生命周期</li>
+</ol>
+<ul>
+<li>onCreate() → onStart() → onResume() → onPause() → onStop() → onDestroy()</li>
+<li>异常情况下的生命周期处理（配置变更、内存不足）</li>
+<li>onSaveInstanceState() 和 onRestoreInstanceState()</li>
+</ul>
+<ol start="3">
+<li>Intent和IntentFilter</li>
+</ol>
+<ul>
+<li>显式Intent和隐式Intent</li>
+<li>Intent的七大属性（Component、Action、Data、Type、Category、Extra、Flag）</li>
+<li>Intent Filter匹配规则</li>
+</ul>
+<p>  UI开发</p>
+<ol>
+<li>布局系统</li>
+</ol>
+<ul>
+<li>ConstraintLayout使用技巧</li>
+<li>RecyclerView优化（ViewHolder复用、DiffUtil）</li>
+<li>自定义View和ViewGroup</li>
+</ul>
+<ol start="2">
+<li>Material Design</li>
+</ol>
+<ul>
+<li>Material Components库使用</li>
+<li>主题和样式系统</li>
+<li>深色模式适配</li>
+</ul>
+<ol start="3">
+<li>Jetpack Compose（现代UI）</li>
+</ol>
+<ul>
+<li>声明式UI编程思想</li>
+<li>State管理（remember、mutableStateOf）</li>
+<li>Compose布局原则</li>
+</ul>
+<p>  架构设计</p>
+<ol>
+<li>MVVM架构</li>
+</ol>
+<ul>
+<li>ViewModel的作用和生命周期</li>
+<li>LiveData和StateFlow/SharedFlow</li>
+<li>DataBinding和ViewBinding</li>
+</ul>
+<ol start="2">
+<li>依赖注入</li>
+</ol>
+<ul>
+<li>Hilt的基本使用</li>
+<li>模块化架构设计</li>
+</ul>
+<ol start="3">
+<li>Clean Architecture</li>
+</ol>
+<ul>
+<li>分层架构原则（Presentation、Domain、Data）</li>
+<li>Repository模式实现</li>
+</ul>
+<p>  数据存储</p>
+<ol>
+<li>本地存储</li>
+</ol>
+<ul>
+<li>SharedPreferences和DataStore</li>
+<li>SQLite数据库和Room</li>
+<li>文件存储</li>
+</ul>
+<ol start="2">
+<li>数据库优化</li>
+</ol>
+<ul>
+<li>索引优化</li>
+<li>事务处理</li>
+<li>数据库升级策略</li>
+</ul>
+<p>  网络编程</p>
+<ol>
+<li>网络库</li>
+</ol>
+<ul>
+<li>Retrofit使用和配置</li>
+<li>OkHttp拦截器</li>
+<li>网络请求优化</li>
+</ul>
+<ol start="2">
+<li>数据解析</li>
+</ol>
+<ul>
+<li>JSON解析（Gson、Moshi）</li>
+<li>XML解析</li>
+<li>Protocol Buffers</li>
+</ul>
+<p>  并发编程</p>
+<ol>
+<li>线程管理</li>
+</ol>
+<ul>
+<li>Handler、Looper、MessageQueue</li>
+<li>AsyncTask的替代方案</li>
+<li>线程池和Executor</li>
+</ul>
+<ol start="2">
+<li>Kotlin协程</li>
+</ol>
+<ul>
+<li>CoroutineScope和CoroutineContext</li>
+<li>协程的异常处理</li>
+<li>Flow的使用场景</li>
+</ul>
+<p>  性能优化</p>
+<ol>
+<li>内存优化</li>
+</ol>
+<ul>
+<li>内存泄漏检测和预防</li>
+<li>OOM问题解决</li>
+<li>内存分析工具使用</li>
+</ul>
+<ol start="2">
+<li>启动优化</li>
+</ol>
+<ul>
+<li>冷启动和热启动优化</li>
+<li>Application初始化优化</li>
+<li>启动时间监控</li>
+</ul>
+<ol start="3">
+<li>渲染优化</li>
+</ol>
+<ul>
+<li>布局优化（减少层级、避免过度绘制）</li>
+<li>GPU渲染分析</li>
+<li>卡顿问题排查</li>
+</ul>
+<p>  安全性</p>
+<ol>
+<li>数据安全</li>
+</ol>
+<ul>
+<li>加密算法使用</li>
+<li>KeyStore系统</li>
+<li>网络传输安全（HTTPS、证书校验）</li>
+</ul>
+<ol start="2">
+<li>权限管理</li>
+</ol>
+<ul>
+<li>运行时权限申请</li>
+<li>权限最佳实践</li>
+<li>隐私保护</li>
+</ul>
+<p>  测试</p>
+<ol>
+<li>单元测试</li>
+</ol>
+<ul>
+<li>JUnit使用</li>
+<li>Mockito框架</li>
+<li>测试覆盖率</li>
+</ul>
+<ol start="2">
+<li>UI测试</li>
+</ol>
+<ul>
+<li>Espresso框架</li>
+<li>UI Automator</li>
+<li>测试策略制定</li>
+</ul>
+<p>  开发工具</p>
+<ol>
+<li>Android Studio</li>
+</ol>
+<ul>
+<li>调试技巧</li>
+<li>性能分析工具</li>
+<li>代码生成和重构</li>
+</ul>
+<ol start="2">
+<li>构建系统</li>
+</ol>
+<ul>
+<li>Gradle配置</li>
+<li>多渠道打包</li>
+<li>ProGuard/R8混淆</li>
+</ul>
+<p>  新技术趋势</p>
+<ol>
+<li>跨平台开发</li>
+</ol>
+<ul>
+<li>Flutter vs React Native对比</li>
+<li>Kotlin Multiplatform Mobile</li>
+<li>跨平台技术选型</li>
+</ul>
+<ol start="2">
+<li>现代Android开发</li>
+</ol>
+<ul>
+<li>Kotlin优先（不再推荐Java）</li>
+<li>Jetpack全家桶</li>
+<li>声明式UI（Compose）</li>
+</ul>
+<p>  面试准备建议</p>
+<ol>
+<li>准备项目亮点: 选择2-3个最有代表性的项目，准备技术难点和解决方案</li>
+<li>算法和数据结构: 刷一些常见的面试题（数组、链表、树、排序等）</li>
+<li>系统设计: 了解高并发、缓存、消息队列等概念</li>
+<li>新技术学习: 关注Android最新动态，了解Jetpack Compose等新技术</li>
+</ol>
+<h2 id="android-触摸事件传递机制">Android 触摸事件传递机制</h2>
+<p>✦ Android触摸事件传递机制</p>
+<ol>
+<li>事件序列
+  触摸事件以MotionEvent对象形式传递，包含三个主要阶段：</li>
+</ol>
+<ul>
+<li>ACTION_DOWN: 手指首次接触屏幕，事件序列的开始</li>
+<li>ACTION_MOVE: 手指在屏幕上移动，可能包含多个MOVE事件</li>
+<li>ACTION_UP: 手指离开屏幕，事件序列的结束</li>
+</ul>
+<ol start="2">
+<li><p>传递顺序
+  事件传递遵循严格的层级顺序：
+   1 Activity → PhoneWindow → DecorView → ViewGroup → View</p>
+</li>
+<li><p>三个核心方法</p>
+</li>
+</ol>
+<p>  dispatchTouchEvent(MotionEvent event)</p>
+<ul>
+<li>作用: 事件的分发入口，所有事件都经过此方法</li>
+<li>返回值:<ul>
+<li>true: 事件被消费，不再继续传递</li>
+<li>false: 事件未消费，向上传递给父容器</li>
+<li>super.dispatchTouchEvent(): 调用默认的分发逻辑</li>
+</ul>
+</li>
+</ul>
+<p>  onInterceptTouchEvent(MotionEvent event)</p>
+<ul>
+<li>作用: ViewGroup特有，决定是否拦截事件</li>
+<li>返回值:<ul>
+<li>true: 拦截事件，事件不再传递给子View</li>
+<li>false: 不拦截，继续传递给子View</li>
+<li>注意: 对ACTION_DOWN事件返回false是常规做法</li>
+</ul>
+</li>
+</ul>
+<p>  onTouchEvent(MotionEvent event)</p>
+<ul>
+<li>作用: 事件的处理方法，决定是否消费事件</li>
+<li>返回值:<ul>
+<li>true: 消费事件，后续事件仍会传递到此View</li>
+<li>false: 不消费，事件回传给父View</li>
+</ul>
+</li>
+</ul>
+<ol start="4">
+<li>传递规则详解</li>
+</ol>
+<p>  事件分发流程</p>
+<pre><code> <span class="hljs-number">1.</span> <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Activity</span>.</span></span>dispatch<span class="hljs-constructor">TouchEvent()</span> →
+ <span class="hljs-number">2.</span> <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">Window</span>.</span></span>dispatch<span class="hljs-constructor">TouchEvent()</span> →
+ <span class="hljs-number">3.</span> <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">DecorView</span>.</span></span>dispatch<span class="hljs-constructor">TouchEvent()</span> →
+ <span class="hljs-number">4.</span> <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">ViewGroup</span>.</span></span>dispatch<span class="hljs-constructor">TouchEvent()</span> →
+ <span class="hljs-number">5.</span> <span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">ViewGroup</span>.</span></span>on<span class="hljs-constructor">InterceptTouchEvent()</span> →
+ <span class="hljs-number">6.</span> 子<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">View</span>.</span></span>dispatch<span class="hljs-constructor">TouchEvent()</span> →
+ <span class="hljs-number">7.</span> 子<span class="hljs-module-access"><span class="hljs-module"><span class="hljs-identifier">View</span>.</span></span>on<span class="hljs-constructor">TouchEvent()</span>
+</code></pre>
+<p>  拦截机制</p>
+<ul>
+<li>ViewGroup默认不拦截ACTION_DOWN事件</li>
+<li>一旦拦截了某个事件序列中的后续事件，同一序列的其他事件也会被拦截</li>
+<li>onInterceptTouchEvent()只对ACTION_DOWN返回false，后续事件才有可能被拦截</li>
+</ul>
+<p>  事件回传
+  当子View不消费事件时，事件会向上回传：
+   1 子View.onTouchEvent() → 父ViewGroup.onTouchEvent() → 父ViewGroup的父容器.onTouchEvent()</p>
+<ol start="5">
+<li>关键源码分析</li>
+</ol>
+<p>  ViewGroup.dispatchTouchEvent()核心逻辑</p>
+<pre><code class="hljs java">  <span class="hljs-number">1</span> <span class="hljs-comment">// 检查是否需要拦截</span>
+  <span class="hljs-number">2</span> <span class="hljs-keyword">if</span> (actionMasked == MotionEvent.ACTION_DOWN) {
+  <span class="hljs-number">3</span>     <span class="hljs-comment">// 重置状态</span>
+  <span class="hljs-number">4</span>     cancelAndClearTouchTargets(ev);
+  <span class="hljs-number">5</span>     resetTouchState();
+  <span class="hljs-number">6</span> }
+  <span class="hljs-number">7</span>
+  <span class="hljs-number">8</span> <span class="hljs-comment">// 检查拦截</span>
+  <span class="hljs-number">9</span> <span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> intercepted;
+ <span class="hljs-number">10</span> <span class="hljs-keyword">if</span> (actionMasked == MotionEvent.ACTION_DOWN || mFirstTouchTarget != <span class="hljs-literal">null</span>) {
+ <span class="hljs-number">11</span>     <span class="hljs-keyword">final</span> <span class="hljs-type">boolean</span> <span class="hljs-variable">disallowIntercept</span> <span class="hljs-operator">=</span> (mGroupFlags &amp; FLAG_DISALLOW_INTERCEPT) != <span class="hljs-number">0</span>;
+ <span class="hljs-number">12</span>     <span class="hljs-keyword">if</span> (!disallowIntercept) {
+ <span class="hljs-number">13</span>         intercepted = onInterceptTouchEvent(ev);
+ <span class="hljs-number">14</span>     } <span class="hljs-keyword">else</span> {
+ <span class="hljs-number">15</span>         intercepted = <span class="hljs-literal">false</span>;
+ <span class="hljs-number">16</span>     }
+ <span class="hljs-number">17</span> }
+</code></pre>
+<ol start="6">
+<li>常见场景处理</li>
+</ol>
+<p>  滑动冲突解决</p>
+<ul>
+<li>外部拦截法: 在父ViewGroup的onInterceptTouchEvent()中处理</li>
+<li>内部拦截法: 在子View中通过requestDisallowInterceptTouchEvent()控制</li>
+</ul>
+<p>  点击事件与滑动事件区分</p>
+<pre><code class="hljs java">  <span class="hljs-number">1</span> <span class="hljs-meta">@Override</span>
+  <span class="hljs-number">2</span> <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">onTouchEvent</span><span class="hljs-params">(MotionEvent event)</span> {
+  <span class="hljs-number">3</span>     <span class="hljs-keyword">switch</span> (event.getAction()) {
+  <span class="hljs-number">4</span>         <span class="hljs-keyword">case</span> MotionEvent.ACTION_DOWN:
+  <span class="hljs-number">5</span>             <span class="hljs-comment">// 记录按下位置和时间</span>
+  <span class="hljs-number">6</span>             mLastX = event.getX();
+  <span class="hljs-number">7</span>             mLastY = event.getY();
+  <span class="hljs-number">8</span>             mDownTime = System.currentTimeMillis();
+  <span class="hljs-number">9</span>             <span class="hljs-keyword">break</span>;
+ <span class="hljs-number">10</span>
+ <span class="hljs-number">11</span>         <span class="hljs-keyword">case</span> MotionEvent.ACTION_MOVE:
+ <span class="hljs-number">12</span>             <span class="hljs-comment">// 计算滑动距离</span>
+ <span class="hljs-number">13</span>             <span class="hljs-type">float</span> <span class="hljs-variable">dx</span> <span class="hljs-operator">=</span> Math.abs(event.getX() - mLastX);
+ <span class="hljs-number">14</span>             <span class="hljs-type">float</span> <span class="hljs-variable">dy</span> <span class="hljs-operator">=</span> Math.abs(event.getY() - mLastY);
+ <span class="hljs-number">15</span>
+ <span class="hljs-number">16</span>             <span class="hljs-comment">// 判断是否为滑动</span>
+ <span class="hljs-number">17</span>             <span class="hljs-keyword">if</span> (dx &gt; mTouchSlop || dy &gt; mTouchSlop) {
+ <span class="hljs-number">18</span>                 <span class="hljs-comment">// 处理滑动逻辑</span>
+ <span class="hljs-number">19</span>                 <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+ <span class="hljs-number">20</span>             }
+ <span class="hljs-number">21</span>             <span class="hljs-keyword">break</span>;
+ <span class="hljs-number">22</span>     }
+ <span class="hljs-number">23</span>     <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.onTouchEvent(event);
+ <span class="hljs-number">24</span> }
+</code></pre>
+<ol start="7">
+<li><p>重要注意事项</p>
+</li>
+<li><p>事件序列一致性: 一旦View决定处理某个事件序列，后续事件都会传递给它</p>
+</li>
+<li><p>ACTION_DOWN的特殊性: 每个事件序列都以ACTION_DOWN开始</p>
+</li>
+<li><p>requestDisallowInterceptTouchEvent(): 子View可以阻止父View拦截事件</p>
+</li>
+<li><p>消费后的传递: 事件被消费后，同一序列的后续事件仍会传递给该View</p>
+</li>
+<li><p>实际应用案例</p>
+</li>
+</ol>
+<p>  自定义滑动View</p>
+<pre><code class="hljs java">  <span class="hljs-number">1</span> <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">CustomScrollView</span> <span class="hljs-keyword">extends</span> <span class="hljs-title class_">ViewGroup</span> {
+  <span class="hljs-number">2</span>     <span class="hljs-meta">@Override</span>
+  <span class="hljs-number">3</span>     <span class="hljs-keyword">public</span> <span class="hljs-type">boolean</span> <span class="hljs-title function_">onInterceptTouchEvent</span><span class="hljs-params">(MotionEvent ev)</span> {
+  <span class="hljs-number">4</span>         <span class="hljs-keyword">switch</span> (ev.getAction()) {
+  <span class="hljs-number">5</span>             <span class="hljs-keyword">case</span> MotionEvent.ACTION_DOWN:
+  <span class="hljs-number">6</span>                 <span class="hljs-comment">// 不拦截DOWN事件，让子View有机会处理</span>
+  <span class="hljs-number">7</span>                 <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+  <span class="hljs-number">8</span>             <span class="hljs-keyword">case</span> MotionEvent.ACTION_MOVE:
+  <span class="hljs-number">9</span>                 <span class="hljs-comment">// 根据滑动距离决定是否拦截</span>
+ <span class="hljs-number">10</span>                 <span class="hljs-keyword">return</span> shouldIntercept(ev);
+ <span class="hljs-number">11</span>             <span class="hljs-keyword">default</span>:
+ <span class="hljs-number">12</span>                 <span class="hljs-keyword">return</span> <span class="hljs-built_in">super</span>.onInterceptTouchEvent(ev);
+ <span class="hljs-number">13</span>         }
+ <span class="hljs-number">14</span>     }
+ <span class="hljs-number">15</span> }
+</code></pre>
+<p>✦ 这个机制是Android开发的核心知识点，理解它对于解决复杂的触摸交互问题至关重要。</p>
 
             </div>
             <!-- 标签 -->

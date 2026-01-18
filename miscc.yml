@@ -2,37 +2,43 @@
 tags:
   embedded:
     title: Embedded      # 标签显示名称
-    color: "#4032a8"     # 标签显示颜色
+    color: "#8e44ad"     # 紫色
   misc:
     title: Misc          # 标签显示名称
-    color: "#7aa629"     # 标签显示颜色
+    color: "#27ae60"     # 绿色
   recsys:
     title: RecSys
-    color: "#f7df1e"
+    color: "#e67e22"     # 橙色
   android:
     title: Android
-    color: "#f7df1e"  
+    color: "#2980b9"     # 蓝色
   object-c:
     title: Objective C
-    color: "#f7df1e"   
+    color: "#c0392b"     # 红色
   cross-platform:
     title: Cross Platform
-    color: "#f7df1e"
+    color: "#f39c12"     # 金黄色
   javascript:
     title: JavaScript
-    color: "#f7df1e"
+    color: "#f1c40f"     # 黄色
   python:
     title: Python
-    color: "#3776ab"
+    color: "#34495e"     # 深灰色
   webdev:
     title: Web Development
-    color: "#61dafb"
+    color: "#9b59b6"     # 靛紫色
   coding-workshop:
     title: Coding WorkShop
-    color: "#f7df1e"
+    color: "#1abc9c"     # 青色
   appdev:
     title: App Development
-    color: "#3776ab"
+    color: "#d35400"     # 深橙色
+  Gemini: 
+    title: Gemini
+    color: "#3498db"
+  Manual: 
+    title: Manual
+    color: "#e84393"
 
 # 目录配置
 dirs:

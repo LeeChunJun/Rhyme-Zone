@@ -7,7 +7,3 @@ private: false
 ---
 
 # Web-Front-End-Stack
-
-# Content Heading
-
-我的第一篇 JavaScript 文章...

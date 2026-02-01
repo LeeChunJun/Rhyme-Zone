@@ -312,3 +312,6 @@ template: post
   ```
 
 ✦ 这个机制是Android开发的核心知识点，理解它对于解决复杂的触摸交互问题至关重要。
+
+## Android View 绘制流程
+

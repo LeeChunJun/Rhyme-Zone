@@ -39,6 +39,13 @@ tags:
   Manual: 
     title: Manual
     color: "#e84393"
+  ai:
+    title: AI
+    color: "#c0392b"     # 红色
+  skill:
+    title: ai-skill
+    color: "#f39c12"     # 金黄色
+
 
 # 目录配置
 dirs:

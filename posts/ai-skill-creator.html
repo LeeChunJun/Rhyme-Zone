@@ -1,0 +1,552 @@
+<!-- post.ejs -->
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <link rel="stylesheet" href="../assets/post-style.css">
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <title>
+        OpenAI官方的一份如何写Skill、优化Skill的教程
+    </title>
+    
+        <link href="../assets/atom-one-light.css" rel="stylesheet">
+        
+</head>
+
+<!-- 返回顶部按钮 -->
+<button id="backToTopBtn" class="back-to-top-btn" title="回到顶部">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7 15L12 10L17 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</button>
+
+<body>
+    <div class="essay-header-container">
+        <a href="../index.html">
+            <img src="../assets/essays-header.png" alt="Essays Header" class="header-image">
+        </a>
+    </div>
+    <div class="container">
+        <div class="essay-item-container">
+            <!-- 标题 -->
+            <div class="essay-item-title">
+                OpenAI官方的一份如何写Skill、优化Skill的教程
+            </div>
+            <!-- 日期 -->
+            <div class="essay-item-date">
+                2025年12月6日 00:00
+            </div>
+            <!-- 内容 -->
+            <div class="essay-item-content">
+                <h1 id="用-evals-系统化测试-agent-skills">用 Evals 系统化测试 Agent Skills</h1>
+<p>一份实用指南：如何让 Agent Skills 变成可以持续测试、评分和改进的东西。</p>
+<p>作者：Dominik Kundel、Gabriel Chua</p>
+<p>当你不断迭代一个供 Codex 这类 Agent 使用的 Skill 时，很难判断自己究竟是在真正改进它，还是仅仅改变了它的行为。一个版本似乎更快，另一个看起来更可靠，但随后某个回归问题又悄悄出现：Skill 没有被触发、跳过了某个必要步骤，或者留下了多余文件。</p>
+<p>从本质上说，Skill 是为 LLM 组织起来的一组 Prompt 和指令。要想长期、可靠地改进一个 Skill，最有效的方法，就是像评估其他 LLM 应用中的 Prompt 一样去评估它。</p>
+<p><em>Evals</em> 是 <em>evaluations</em>（评估）的简称，用来检查模型的输出，以及它为了得到这些输出所执行的步骤，是否符合你的预期。与其问“这个版本是不是感觉更好了？”——或者纯凭感觉判断——不如通过 Eval 提出一些具体问题，例如：</p>
+<ul>
+<li>Agent 是否调用了这个 Skill？</li>
+<li>它是否执行了预期的命令？</li>
+<li>它生成的输出是否遵循你关心的约定？</li>
+</ul>
+<p>具体来说，一个 Eval 可以概括为：</p>
+<p>Prompt → 捕获的一次运行结果（trace + artifacts）→ 一小组检查 → 一个可以随时间比较的分数。</p>
+<p>在实践中，针对 Agent Skills 的 Eval 很像轻量级的端到端测试：运行 Agent，记录发生了什么，然后按照一小组规则给结果打分。</p>
+<p>本文将介绍一种清晰的 Codex 测试模式：先定义“成功”是什么，再加入确定性检查和基于评分标准（rubric）的评估，让改进和回归都变得清晰可见。</p>
+<h2 id="1-在编写-skill-之前，先定义什么叫成功">1. 在编写 Skill 之前，先定义什么叫成功</h2>
+<p>在真正开始写 Skill 之前，先明确写下什么叫“成功”，而且这些定义必须是可以实际衡量的。</p>
+<p>一种实用的思考方式，是把检查项分成几类：</p>
+<ul>
+<li><strong>结果目标（Outcome goals）：</strong> 任务是否完成？应用能否运行？</li>
+<li><strong>过程目标（Process goals）：</strong> Codex 是否调用了 Skill，并按照你预期的工具和步骤执行？</li>
+<li><strong>风格目标（Style goals）：</strong> 输出是否遵循你要求的规范？</li>
+<li><strong>效率目标（Efficiency goals）：</strong> 是否在没有无效折腾的情况下完成任务，例如避免不必要的命令或过量的 Token 消耗？</li>
+</ul>
+<p>这个列表应该保持精简，只关注必须通过的检查项。目标不是一开始就把所有偏好都编码进去，而是捕获那些你最在意的行为。</p>
+<p>例如，本文会评估一个用于搭建 Demo 应用的 Skill。其中有些检查非常具体：它有没有执行 <code>npm install</code>？有没有创建 <code>package.json</code>？</p>
+<p>与此同时，我们还会结合一个结构化的风格评分标准，用来评估代码约定和页面布局等内容。</p>
+<p>这种组合是有意为之。你需要的是快速、针对性强的信号，让具体的回归问题尽早暴露出来，而不是等到最后只得到一个笼统的“通过/失败”结果。</p>
+<h2 id="2-创建-skill">2. 创建 Skill</h2>
+<p>一个 Codex Skill 本质上是一个目录，其中包含一个 <code>SKILL.md</code> 文件。</p>
+<p>该文件由两部分组成：</p>
+<ul>
+<li>YAML front matter，其中包含 <code>name</code> 和 <code>description</code></li>
+<li>定义 Skill 行为的 Markdown 指令，以及可选的资源和脚本</li>
+</ul>
+<p><code>name</code> 和 <code>description</code> 的重要性可能比你想象中更高。</p>
+<p>它们是 Codex 判断以下问题时最主要的信号：</p>
+<ul>
+<li>是否应该调用这个 Skill</li>
+<li>什么时候应该把 <code>SKILL.md</code> 的其余内容注入 Agent 的上下文</li>
+</ul>
+<p>如果这些字段过于模糊，或者承担了太多含义，Skill 就无法稳定地被正确触发。</p>
+<p>最快的入门方法，是使用 Codex 内置的 Skill Creator——它本身其实也是一个 Skill：</p>
+<pre><code class="hljs text">$skill-creator
+</code></pre>
+<p>Creator 会询问你：</p>
+<ul>
+<li>这个 Skill 是做什么的</li>
+<li>它应该在什么情况下触发</li>
+<li>它是纯指令型，还是由脚本支持</li>
+</ul>
+<p>默认建议采用纯指令型。</p>
+<h3 id="一个示例-skill">一个示例 Skill</h3>
+<p>本文使用一个刻意保持最小化的例子：创建一个 Skill，以可预测、可重复的方式搭建一个小型 React Demo 应用。</p>
+<p>这个 Skill 将执行以下工作：</p>
+<ul>
+<li>使用 Vite 的 React + TypeScript 模板搭建项目</li>
+<li>使用官方 Vite 插件方式配置 Tailwind CSS</li>
+<li>强制采用最小且一致的文件结构</li>
+<li>明确定义“完成标准”（definition of done），从而使成功与否容易评估</li>
+</ul>
+<p>下面是一份简洁的草稿，可以放到：</p>
+<ul>
+<li><code>.codex/skills/setup-demo-app/SKILL.md</code>，作用域为当前仓库</li>
+<li><code>~/.codex/skills/setup-demo-app/SKILL.md</code>，作用域为当前用户</li>
+</ul>
+<pre><code class="hljs markdown">---
+name: setup-demo-app
+<span class="hljs-section">description: Scaffold a Vite + React + Tailwind demo app with a small, consistent project structure.
+---</span>
+
+<span class="hljs-section">## When to use this</span>
+
+Use when you need a fresh demo app for quick UI experiments or reproductions.
+
+<span class="hljs-section">## What to build</span>
+
+Create a Vite React TypeScript app and configure Tailwind. Keep it minimal.
+
+Project structure after setup:
+
+<span class="hljs-bullet">-</span> src/
+<span class="hljs-bullet">  -</span> main.tsx (entry)
+<span class="hljs-bullet">  -</span> App.tsx (root UI)
+<span class="hljs-bullet">  -</span> components/
+<span class="hljs-bullet">    -</span> Header.tsx
+<span class="hljs-bullet">    -</span> Card.tsx
+<span class="hljs-bullet">  -</span> index.css (Tailwind import)
+<span class="hljs-bullet">-</span> index.html
+<span class="hljs-bullet">-</span> package.json
+
+Style requirements:
+
+<span class="hljs-bullet">-</span> TypeScript components
+<span class="hljs-bullet">-</span> Functional components only
+<span class="hljs-bullet">-</span> Tailwind classes for styling (no CSS modules)
+<span class="hljs-bullet">-</span> No extra UI libraries
+
+<span class="hljs-section">## Steps</span>
+
+<span class="hljs-bullet">1.</span> Scaffold with Vite using the React TS template:
+   npm create vite@latest demo-app -- --template react-ts
+
+<span class="hljs-bullet">2.</span> Install dependencies:
+   cd demo-app
+   npm install
+
+<span class="hljs-bullet">3.</span> Install and configure Tailwind using the Vite plugin.
+<span class="hljs-bullet">   -</span> npm install tailwindcss @tailwindcss/vite
+<span class="hljs-bullet">   -</span> Add the tailwind plugin to vite.config.ts
+<span class="hljs-bullet">   -</span> In src/index.css, replace contents with:
+<span class="hljs-code">     @import &quot;tailwindcss&quot;;
+</span>
+<span class="hljs-bullet">4.</span> Implement the minimal UI:
+<span class="hljs-bullet">   -</span> Header: app title and short subtitle
+<span class="hljs-bullet">   -</span> Card: reusable card container
+<span class="hljs-bullet">   -</span> App: render Header + 2 Cards with placeholder text
+
+<span class="hljs-section">## Definition of done</span>
+
+<span class="hljs-bullet">-</span> npm run dev starts successfully
+<span class="hljs-bullet">-</span> package.json exists
+<span class="hljs-bullet">-</span> src/components/Header.tsx and src/components/Card.tsx exist
+</code></pre>
+<p>这个示例 Skill 是有意采用明确立场、加入具体约束的。</p>
+<p>原因很简单：如果没有明确约束，就没有任何具体内容可供评估。</p>
+<h2 id="3-手动触发-skill，以暴露隐藏假设">3. 手动触发 Skill，以暴露隐藏假设</h2>
+<p>由于 Skill 是否被调用高度依赖 <code>SKILL.md</code> 中的 <code>name</code> 和 <code>description</code>，首先要验证的事情，就是 <code>setup-demo-app</code> 是否会在你预期的场景中被触发。</p>
+<p>在开发早期，可以在真实仓库或临时目录中显式激活 Skill：</p>
+<ul>
+<li>使用 <code>/skills</code> 斜杠命令</li>
+<li>使用 <code>$</code> 前缀直接引用 Skill</li>
+</ul>
+<p>然后观察它在哪里出问题。</p>
+<p>这个过程可以帮助你发现各种遗漏，例如：</p>
+<ul>
+<li>Skill 完全没有触发</li>
+<li>Skill 触发得过于积极</li>
+<li>Skill 虽然运行了，但偏离了你设定的步骤</li>
+</ul>
+<p>在这个阶段，你并不是在优化速度或者打磨细节。</p>
+<p>你要寻找的是 Skill 中隐藏的假设，例如：</p>
+<ul>
+<li><p><strong>触发假设（Triggering assumptions）：</strong>
+类似“搭建一个快速的 React Demo”这样的 Prompt，本来应该触发 <code>setup-demo-app</code>，但实际上没有触发。或者更通用的请求，比如“添加 Tailwind 样式”，却意外触发了这个 Skill。</p>
+</li>
+<li><p><strong>环境假设（Environment assumptions）：</strong>
+Skill 假设自己运行在一个空目录中，或者默认认为系统中已经有 <code>npm</code>，并且优先使用 <code>npm</code> 而不是其他包管理器。</p>
+</li>
+<li><p><strong>执行假设（Execution assumptions）：</strong>
+Agent 跳过了 <code>npm install</code>，因为它假设依赖已经安装；或者在 Vite 项目还不存在之前，就开始配置 Tailwind。</p>
+</li>
+</ul>
+<p>当你准备把这些运行过程变得可重复时，就可以切换到 <code>codex exec</code>。</p>
+<p>它专门针对自动化和 CI 场景设计：</p>
+<ul>
+<li>进度信息会流式写入 <code>stderr</code></li>
+<li>只有最终结果写入 <code>stdout</code></li>
+</ul>
+<p>因此更方便通过脚本执行、捕获和检查运行结果。</p>
+<p>默认情况下，<code>codex exec</code> 会运行在受限的沙箱环境中。</p>
+<p>如果任务需要写入文件，可以使用 <code>--full-auto</code>。</p>
+<p>总体原则是，尤其在自动化环境中，应始终使用完成任务所需的最小权限。</p>
+<p>一个基本的手动运行示例如下：</p>
+<pre><code class="hljs bash">codex <span class="hljs-built_in">exec</span> --full-auto \
+  <span class="hljs-string">&#x27;Use the $setup-demo-app skill to create the project in this directory.&#x27;</span>
+</code></pre>
+<p>第一次实际运行的主要目的并不是验证最终正确性，而是发现边界情况。</p>
+<p>你在这个阶段做出的每一个手动修复，例如：</p>
+<ul>
+<li>补上缺失的 <code>npm install</code></li>
+<li>修正 Tailwind 配置</li>
+<li>收紧 Skill 的触发描述</li>
+</ul>
+<p>都可以变成未来的一条 Eval。</p>
+<p>这样，在开始大规模评估之前，你就可以把这些预期行为固定下来。</p>
+<h2 id="4-使用小规模、有针对性的-prompt-集，尽早发现回归">4. 使用小规模、有针对性的 Prompt 集，尽早发现回归</h2>
+<p>你并不需要一个大型 Benchmark 才能从 Eval 中获得价值。</p>
+<p>对于单个 Skill，一组 10～20 个 Prompt 通常就足以：</p>
+<ul>
+<li>暴露回归问题</li>
+<li>在早期确认修改是否带来了改善</li>
+</ul>
+<p>可以从一个小型 CSV 开始。</p>
+<p>随着你在开发和实际使用过程中不断遇到真实失败案例，再逐步扩展它。</p>
+<p>每一行都应该描述一种你关心的情况：</p>
+<ul>
+<li><code>setup-demo-app</code> 是否应该被触发</li>
+<li>如果触发，成功应该是什么样子</li>
+</ul>
+<p>例如，最初的 <code>evals/setup-demo-app.prompts.csv</code> 可以是：</p>
+<pre><code>id,should_trigger,prompt
+test<span class="hljs-number">-01</span>,<span class="hljs-keyword">true</span>,<span class="hljs-comment">&quot;Create a demo app named `devday-demo` using the $setup-demo-app skill&quot;</span>
+test<span class="hljs-number">-02</span>,<span class="hljs-keyword">true</span>,<span class="hljs-comment">&quot;Set up a minimal React demo app with Tailwind for quick UI experiments&quot;</span>
+test<span class="hljs-number">-03</span>,<span class="hljs-keyword">true</span>,<span class="hljs-comment">&quot;Create a small demo app to showcase the Responses API&quot;</span>
+test<span class="hljs-number">-04</span>,<span class="hljs-keyword">false</span>,<span class="hljs-comment">&quot;Add Tailwind styling to my existing React app&quot;</span>
+</code></pre>
+<p>这些测试分别覆盖不同的情况。</p>
+<h3 id="显式调用（test-01）">显式调用（<code>test-01</code>）</h3>
+<p>这个 Prompt 直接写出了 Skill 的名字。</p>
+<p>它用于确保：</p>
+<ul>
+<li>Codex 在明确要求时能够调用 <code>setup-demo-app</code></li>
+<li>对 Skill 的名称、描述或指令所做的修改，不会破坏直接调用方式</li>
+</ul>
+<h3 id="隐式调用（test-02）">隐式调用（<code>test-02</code>）</h3>
+<p>这个 Prompt 完全描述了该 Skill 所针对的目标场景：</p>
+<p>搭建一个最小化的 React + Tailwind Demo。</p>
+<p>但是它没有提到 Skill 名称。</p>
+<p>这个测试用于验证 <code>SKILL.md</code> 中的 <code>name</code> 和 <code>description</code> 是否足够准确，使 Codex 能够自行选择这个 Skill。</p>
+<h3 id="上下文调用（test-03）">上下文调用（<code>test-03</code>）</h3>
+<p>这个 Prompt 加入了领域上下文，例如 Responses API，但底层任务仍然是同样的项目搭建工作。</p>
+<p>它用于验证：</p>
+<ul>
+<li>在更真实、带有一定“噪声”的 Prompt 中，Skill 是否仍然会被触发</li>
+<li>最终生成的应用是否仍然符合预期的结构和约定</li>
+</ul>
+<h3 id="负向对照（test-04）">负向对照（<code>test-04</code>）</h3>
+<p>这个 Prompt <strong>不应该</strong> 调用 <code>setup-demo-app</code>。</p>
+<p>这是一个非常常见的相邻请求：</p>
+<p>“给已有 React 应用添加 Tailwind。”</p>
+<p>它很容易错误匹配 Skill 的描述，比如“React + Tailwind Demo”。</p>
+<p>至少包含一个 <code>should_trigger=false</code> 的用例，可以帮助发现<strong>误触发（false positives）</strong>：</p>
+<p>Codex 过于积极地选择了这个 Skill，结果新建了整个项目，而用户真正想要的只是修改现有项目。</p>
+<p>这种组合是有意设计的。</p>
+<p>有些 Eval 应该验证显式调用 Skill 时行为是否正确；另一些则应该验证，在现实世界中用户完全没有提到 Skill 名称时，它是否仍然会正确触发。</p>
+<p>当你发现新的问题时，例如：</p>
+<ul>
+<li>应该触发却没有触发</li>
+<li>输出开始偏离预期</li>
+</ul>
+<p>就把这些场景作为新的行加入 CSV。</p>
+<p>随着时间推移，这个小型数据集会成为一份持续演进的记录，明确说明 <code>setup-demo-app</code> 必须一直正确处理哪些场景。</p>
+<h2 id="5-从轻量级、确定性的-grader-开始">5. 从轻量级、确定性的 Grader 开始</h2>
+<p>这是整个评估步骤的核心：</p>
+<p>使用 <code>codex exec --json</code>，让 Eval Harness 能够对<strong>真正发生了什么</strong>进行评分，而不是只检查最终输出看起来是否正确。</p>
+<p>启用 <code>--json</code> 后，<code>stdout</code> 会变成由结构化事件组成的 JSONL 流。</p>
+<p>这样就可以很容易地针对你关心的行为编写确定性检查，例如：</p>
+<ul>
+<li>是否执行了 <code>npm install</code>？</li>
+<li>是否创建了 <code>package.json</code>？</li>
+<li>是否以预期的顺序执行了预期命令？</li>
+</ul>
+<p>这些检查被刻意设计得很轻量。</p>
+<p>在引入基于模型的评分之前，它们能够提供快速、可解释的信号。</p>
+<h3 id="一个最小化的-nodejs-runner">一个最小化的 Node.js Runner</h3>
+<p>一个“已经够用”的实现大致如下：</p>
+<ol>
+<li>对每个 Prompt 执行 <code>codex exec --json --full-auto &quot;&lt;prompt&gt;&quot;</code></li>
+<li>把 JSONL trace 保存到磁盘</li>
+<li>解析 trace，并针对其中的事件执行确定性检查</li>
+</ol>
+<pre><code class="hljs javascript"><span class="hljs-comment">// evals/run-setup-demo-app-evals.mjs</span>
+<span class="hljs-keyword">import</span> { spawnSync } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;node:child_process&quot;</span>;
+<span class="hljs-keyword">import</span> { readFileSync, writeFileSync, existsSync, mkdirSync } <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;node:fs&quot;</span>;
+<span class="hljs-keyword">import</span> path <span class="hljs-keyword">from</span> <span class="hljs-string">&quot;node:path&quot;</span>;
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">runCodex</span>(<span class="hljs-params">prompt, outJsonlPath</span>) {
+  <span class="hljs-keyword">const</span> res = <span class="hljs-title function_">spawnSync</span>(
+    <span class="hljs-string">&quot;codex&quot;</span>,
+    [
+      <span class="hljs-string">&quot;exec&quot;</span>,
+      <span class="hljs-string">&quot;--json&quot;</span>, <span class="hljs-comment">// REQUIRED: emit structured events</span>
+      <span class="hljs-string">&quot;--full-auto&quot;</span>, <span class="hljs-comment">// Allow file system changes</span>
+      prompt,
+    ],
+    { <span class="hljs-attr">encoding</span>: <span class="hljs-string">&quot;utf8&quot;</span> }
+  );
+
+  <span class="hljs-title function_">mkdirSync</span>(path.<span class="hljs-title function_">dirname</span>(outJsonlPath), { <span class="hljs-attr">recursive</span>: <span class="hljs-literal">true</span> });
+
+  <span class="hljs-comment">// stdout is JSONL when --json is enabled</span>
+  <span class="hljs-title function_">writeFileSync</span>(outJsonlPath, res.<span class="hljs-property">stdout</span>, <span class="hljs-string">&quot;utf8&quot;</span>);
+
+  <span class="hljs-keyword">return</span> { <span class="hljs-attr">exitCode</span>: res.<span class="hljs-property">status</span> ?? <span class="hljs-number">1</span>, <span class="hljs-attr">stderr</span>: res.<span class="hljs-property">stderr</span> };
+}
+
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">parseJsonl</span>(<span class="hljs-params">jsonlText</span>) {
+  <span class="hljs-keyword">return</span> jsonlText
+    .<span class="hljs-title function_">split</span>(<span class="hljs-string">&quot;\n&quot;</span>)
+    .<span class="hljs-title function_">filter</span>(<span class="hljs-title class_">Boolean</span>)
+    .<span class="hljs-title function_">map</span>(<span class="hljs-function">(<span class="hljs-params">line</span>) =&gt;</span> <span class="hljs-title class_">JSON</span>.<span class="hljs-title function_">parse</span>(line));
+}
+
+<span class="hljs-comment">// deterministic check: did the agent run `npm install`?</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">checkRanNpmInstall</span>(<span class="hljs-params">events</span>) {
+  <span class="hljs-keyword">return</span> events.<span class="hljs-title function_">some</span>(
+    <span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span>
+      (e.<span class="hljs-property">type</span> === <span class="hljs-string">&quot;item.started&quot;</span> || e.<span class="hljs-property">type</span> === <span class="hljs-string">&quot;item.completed&quot;</span>) &amp;&amp;
+      e.<span class="hljs-property">item</span>?.<span class="hljs-property">type</span> === <span class="hljs-string">&quot;command_execution&quot;</span> &amp;&amp;
+      <span class="hljs-keyword">typeof</span> e.<span class="hljs-property">item</span>?.<span class="hljs-property">command</span> === <span class="hljs-string">&quot;string&quot;</span> &amp;&amp;
+      e.<span class="hljs-property">item</span>.<span class="hljs-property">command</span>.<span class="hljs-title function_">includes</span>(<span class="hljs-string">&quot;npm install&quot;</span>)
+  );
+}
+
+<span class="hljs-comment">// deterministic check: did `package.json` get created?</span>
+<span class="hljs-keyword">function</span> <span class="hljs-title function_">checkPackageJsonExists</span>(<span class="hljs-params">projectDir</span>) {
+  <span class="hljs-keyword">return</span> <span class="hljs-title function_">existsSync</span>(path.<span class="hljs-title function_">join</span>(projectDir, <span class="hljs-string">&quot;package.json&quot;</span>));
+}
+
+<span class="hljs-comment">// Example single-case run</span>
+<span class="hljs-keyword">const</span> projectDir = process.<span class="hljs-title function_">cwd</span>();
+<span class="hljs-keyword">const</span> tracePath = path.<span class="hljs-title function_">join</span>(projectDir, <span class="hljs-string">&quot;evals&quot;</span>, <span class="hljs-string">&quot;artifacts&quot;</span>, <span class="hljs-string">&quot;test-01.jsonl&quot;</span>);
+
+<span class="hljs-keyword">const</span> prompt =
+  <span class="hljs-string">&quot;Create a demo app named demo-app using the $setup-demo-app skill&quot;</span>;
+
+<span class="hljs-title function_">runCodex</span>(prompt, tracePath);
+
+<span class="hljs-keyword">const</span> events = <span class="hljs-title function_">parseJsonl</span>(<span class="hljs-title function_">readFileSync</span>(tracePath, <span class="hljs-string">&quot;utf8&quot;</span>));
+
+<span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>({
+  <span class="hljs-attr">ranNpmInstall</span>: <span class="hljs-title function_">checkRanNpmInstall</span>(events),
+  <span class="hljs-attr">hasPackageJson</span>: <span class="hljs-title function_">checkPackageJsonExists</span>(path.<span class="hljs-title function_">join</span>(projectDir, <span class="hljs-string">&quot;demo-app&quot;</span>)),
+});
+</code></pre>
+<p>这里最大的价值在于：所有检查都是<strong>确定性的，而且容易调试</strong>。</p>
+<p>如果某项检查失败，你可以直接打开 JSONL 文件，查看究竟发生了什么。</p>
+<p>每次命令执行都会按照顺序出现在 <code>item.*</code> 事件中。</p>
+<p>因此，回归问题非常容易：</p>
+<ul>
+<li>解释</li>
+<li>定位</li>
+<li>修复</li>
+</ul>
+<p>而这正是这一阶段最需要的能力。</p>
+<h2 id="6-使用-codex-和基于-rubric-的评分进行定性检查">6. 使用 Codex 和基于 Rubric 的评分进行定性检查</h2>
+<p>确定性检查可以回答：</p>
+<p>“它有没有完成最基本的事情？”</p>
+<p>但是它无法回答：</p>
+<p>“它是否按照你想要的方式完成了？”</p>
+<p>对于 <code>setup-demo-app</code> 这样的 Skill，很多要求本质上是定性的，例如：</p>
+<ul>
+<li>组件结构是否合理</li>
+<li>是否遵循样式规范</li>
+<li>Tailwind 是否采用了预期的配置方式</li>
+</ul>
+<p>这些内容很难仅通过：</p>
+<ul>
+<li>文件是否存在</li>
+<li>命令执行次数</li>
+</ul>
+<p>之类的简单检查捕获。</p>
+<p>一种实用方案，是在 Eval Pipeline 中增加第二个由模型辅助的步骤：</p>
+<ol>
+<li>运行 Setup Skill，让它把代码写入磁盘</li>
+<li>对最终生成的仓库执行一次<strong>只读风格检查</strong></li>
+<li>强制返回一个<strong>结构化结果</strong>，使 Harness 能够稳定评分</li>
+</ol>
+<p>Codex 可以通过 <code>--output-schema</code> 直接支持这一模式。</p>
+<p>它可以把最终输出限制为你指定的 JSON Schema。</p>
+<h3 id="一个小型-rubric-schema">一个小型 Rubric Schema</h3>
+<p>首先定义一个小型 Schema，只包含你真正关心的检查项。</p>
+<p>例如创建：</p>
+<p><code>evals/style-rubric.schema.json</code></p>
+<pre><code class="hljs json"><span class="hljs-punctuation">{</span>
+  <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+    <span class="hljs-attr">&quot;overall_pass&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;boolean&quot;</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;score&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;integer&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;minimum&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">0</span><span class="hljs-punctuation">,</span> <span class="hljs-attr">&quot;maximum&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-number">100</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+    <span class="hljs-attr">&quot;checks&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;array&quot;</span><span class="hljs-punctuation">,</span>
+      <span class="hljs-attr">&quot;items&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+        <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;object&quot;</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;properties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span>
+          <span class="hljs-attr">&quot;id&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;pass&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;boolean&quot;</span> <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+          <span class="hljs-attr">&quot;notes&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">{</span> <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;string&quot;</span> <span class="hljs-punctuation">}</span>
+        <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;id&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;pass&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;notes&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+        <span class="hljs-attr">&quot;additionalProperties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+      <span class="hljs-punctuation">}</span>
+    <span class="hljs-punctuation">}</span>
+  <span class="hljs-punctuation">}</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;required&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;overall_pass&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;score&quot;</span><span class="hljs-punctuation">,</span> <span class="hljs-string">&quot;checks&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span>
+  <span class="hljs-attr">&quot;additionalProperties&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-keyword">false</span>
+<span class="hljs-punctuation">}</span>
+</code></pre>
+<p>这个 Schema 提供了一组稳定字段：</p>
+<ul>
+<li><code>overall_pass</code></li>
+<li><code>score</code></li>
+<li>每一个检查项的结果</li>
+</ul>
+<p>这样，你就可以在多次运行之间：</p>
+<ul>
+<li>汇总</li>
+<li>比较差异</li>
+<li>持续追踪</li>
+</ul>
+<h3 id="style-check-prompt">Style Check Prompt</h3>
+<p>接下来运行第二次 <code>codex exec</code>。</p>
+<p>这一次它<strong>只检查仓库</strong>，并返回符合 Rubric Schema 的 JSON 结果：</p>
+<pre><code class="hljs bash">codex <span class="hljs-built_in">exec</span> \
+  <span class="hljs-string">&quot;Evaluate the demo-app repository against these requirements:
+   - Vite + React + TypeScript project exists
+   - Tailwind is configured via @tailwindcss/vite and CSS imports tailwindcss
+   - src/components contains Header.tsx and Card.tsx
+   - Components are functional and styled with Tailwind utility classes (no CSS modules)
+   Return a rubric result as JSON with check ids: vite, tailwind, structure, style.&quot;</span> \
+  --output-schema ./evals/style-rubric.schema.json \
+  -o ./evals/artifacts/test-01.style.json
+</code></pre>
+<p>这正是 <code>--output-schema</code> 非常实用的地方。</p>
+<p>如果返回的是自由格式文本，就很难：</p>
+<ul>
+<li>解析</li>
+<li>横向比较</li>
+</ul>
+<p>而使用 Schema 后，你会得到结构固定、可以预测的 JSON 对象，Eval Harness 可以在大量运行结果之间稳定进行评分。</p>
+<p>如果之后把这套 Eval Suite 放进 CI，Codex GitHub Action 也明确支持通过 <code>codex-args</code> 传入 <code>--output-schema</code>。</p>
+<p>因此，在自动化工作流里也可以强制使用同样的结构化输出。</p>
+<h2 id="7-随着-skill-成熟，逐步扩展-eval">7. 随着 Skill 成熟，逐步扩展 Eval</h2>
+<p>一旦核心循环建立起来，就可以按照 Skill 真正需要的方向继续扩展 Eval。</p>
+<p>原则是：</p>
+<p>先从小处开始，只在能够真正增加信心的地方逐步加入更深入的检查。</p>
+<p>例如，可以增加：</p>
+<ul>
+<li><p><strong>命令数量与无效折腾（Command count and thrashing）：</strong>
+统计 JSONL trace 中的 <code>command_execution</code> 项，从而发现 Agent 开始循环执行命令、重复运行命令等回归问题。<code>turn.completed</code> 事件中也可以获取 Token 使用量。</p>
+</li>
+<li><p><strong>Token Budget：</strong>
+跟踪 <code>usage.input_tokens</code> 和 <code>usage.output_tokens</code>，发现意外的 Prompt 膨胀，并比较不同版本之间的效率。</p>
+</li>
+<li><p><strong>构建检查（Build checks）：</strong>
+在 Skill 执行完成后运行 <code>npm run build</code>。这是一个更强的端到端信号，可以发现损坏的 import 或错误的工具配置。</p>
+</li>
+<li><p><strong>运行时冒烟测试（Runtime smoke checks）：</strong>
+启动 <code>npm run dev</code>，然后用 <code>curl</code> 请求开发服务器；或者如果已经有 Playwright 测试，也可以运行一个轻量级 Playwright 检查。应该有选择地使用，因为它虽然能增加信心，但也会提高执行成本。</p>
+</li>
+<li><p><strong>仓库整洁度（Repository cleanliness）：</strong>
+确保运行过程不会生成不需要的文件，并确认 <code>git status --porcelain</code> 为空，或者只包含显式允许的文件。</p>
+</li>
+<li><p><strong>沙箱与权限回归（Sandbox and permission regressions）：</strong>
+验证 Skill 在不提升权限的情况下仍然可以正常运行。进入自动化阶段后，最小权限默认值尤其重要。</p>
+</li>
+</ul>
+<p>总体模式始终一致：</p>
+<p>先从能够解释行为的快速检查开始，再只在确实能够降低风险时，引入更慢、更重的检查。</p>
+<h2 id="8-核心要点">8. 核心要点</h2>
+<p>这个小型 <code>setup-demo-app</code> 示例展示了如何从：</p>
+<p>“感觉这个版本更好了”</p>
+<p>转变为：</p>
+<p>“有证据证明这个版本更好了。”</p>
+<p>核心方法就是：</p>
+<p>运行 Agent → 记录发生了什么 → 使用少量检查规则评分。</p>
+<p>一旦建立了这个循环，每一次修改都会更容易验证，每一次回归也都会更加清晰。</p>
+<p>关键结论如下：</p>
+<ul>
+<li><p><strong>衡量真正重要的东西。</strong>
+好的 Eval 应该让回归问题清晰可见，也让失败原因容易解释。</p>
+</li>
+<li><p><strong>从一个可以检查的完成标准开始。</strong>
+使用 <code>$skill-creator</code> 快速建立初始版本，然后不断收紧指令，直到“成功”具有明确、无歧义的定义。</p>
+</li>
+<li><p><strong>让 Eval 基于实际行为。</strong>
+使用 <code>codex exec --json</code> 捕获 JSONL，并针对 <code>command_execution</code> 事件编写确定性检查。</p>
+</li>
+<li><p><strong>在规则不够用时使用 Codex。</strong>
+增加一轮结构化、基于 Rubric 的模型评分，并通过 <code>--output-schema</code> 可靠评估风格和约定。</p>
+</li>
+<li><p><strong>让真实失败案例决定测试覆盖范围。</strong>
+每一次手动修复都代表一个信号。把它变成测试，这样 Skill 以后就能持续把这件事做对。</p>
+</li>
+</ul>
+
+            </div>
+            <!-- 标签 -->
+            <div class="essay-item-tags">
+                
+                    <span>
+                        AI
+                    </span>
+                    
+                    <span>
+                        ai-skill
+                    </span>
+                    
+            </div>
+        </div>
+    </div>
+    <footer class="miscc-footer">
+        Powered by <a href="https://github.com/wiomoc/miscc" class="miscc-link">miscc</a> version v0.0.6-1-g4297cce
+    </footer>
+</body>
+
+</html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    
+    // 监听滚动事件，控制按钮显示隐藏
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            backToTopBtn.classList.remove('hidden');
+        } else {
+            backToTopBtn.classList.add('hidden');
+        }
+    });
+    
+    // 点击按钮回到顶部
+    backToTopBtn.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+});
+</script>
